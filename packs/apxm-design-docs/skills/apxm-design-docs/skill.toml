@@ -1,0 +1,27 @@
+skill_id = "apxm-design-docs"
+version = "0.0.1"
+display_name = "APXM Design Docs"
+description = "Update conceptual docs in docs/design/ without overclaiming implementation state — keeps prose anchored to shipped code."
+entry_flow = "apxm_design_docs"
+required_capabilities = []
+timeout_ms = 60000
+token_limit = 8192
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "doc_path"
+type = "string"
+description = "Path under docs/design/ to edit (relative to repo root)."
+required = true
+
+[[inputs]]
+name = "intent"
+type = "string"
+description = "What the edit must convey (e.g. 'document Phase-1 IR ship', 'correct overclaim about capability negotiation')."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Edit summary, code citations supporting each new factual claim, ship/aspirational labels per section."

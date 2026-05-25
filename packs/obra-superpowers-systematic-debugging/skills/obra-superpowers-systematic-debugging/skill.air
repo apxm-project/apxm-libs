@@ -1,0 +1,34 @@
+// APXM-AIR port of obra/superpowers systematic-debugging.
+// Encodes the 4-phase Iron Law: NO FIXES WITHOUT ROOT CAUSE FIRST.
+// The Validate gate after Phase 1 prevents any Synthesize (fix-proposal)
+// node from firing before root cause has been established.
+
+flow systematic_debugging(symptom: string, context: string) -> fix_proposal: json {
+  // Phase 1: Root cause investigation (search + analyze fan-out).
+  let errors = read_error_messages(symptom);
+  let repro = reproduce_consistently(symptom, context) @cpu;
+  let traces = parallel {
+    analyze_stack_traces(errors) @cpu,
+    analyze_recent_changes(context) @cpu,
+    analyze_test_history(context) @cpu,
+  };
+
+  // Iron Law gate: must have root cause before any fix node runs.
+  let root_cause = identify_root_cause(traces, repro) @cpu;
+  validate_root_cause_established(root_cause); // hard-fail if not
+
+  // Phase 2: Pattern check — is this a known anti-pattern?
+  let pattern = analyze_pattern_match(root_cause) @cpu;
+
+  // Phase 3: Fix design — propose candidates, dispatch GPU synth.
+  let candidates = parallel {
+    propose_fix(root_cause, pattern, strategy="minimal") @gpu,
+    propose_fix(root_cause, pattern, strategy="defense-in-depth") @gpu,
+  };
+
+  // Phase 4: Verification plan before claiming completion.
+  let verification = plan_verification(candidates, repro) @cpu;
+  let fix_proposal = synthesize_fix_proposal(candidates, verification) @gpu;
+
+  return fix_proposal;
+}

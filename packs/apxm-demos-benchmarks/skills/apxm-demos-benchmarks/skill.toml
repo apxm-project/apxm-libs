@@ -1,0 +1,33 @@
+skill_id = "apxm-demos-benchmarks"
+version = "0.0.1"
+display_name = "APXM Demos & Benchmarks"
+description = "Author Gemma demos and benchmark harnesses: workload selection, preregistration template, driver-script scaffold, .apxm output paths."
+entry_flow = "apxm_demos_benchmarks"
+required_capabilities = []
+timeout_ms = 120000
+token_limit = 12288
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "workload_name"
+type = "string"
+description = "Identifier for the new benchmark workload (kebab-case)."
+required = true
+
+[[inputs]]
+name = "intended_claim"
+type = "string"
+description = "What the benchmark should prove (latency parity, throughput uplift, cache reuse, etc.)."
+required = true
+
+[[inputs]]
+name = "host_repo"
+type = "string"
+description = "Optional override: 'apxm-eval' (default) or 'apxm' for runtime-internal microbenchmarks."
+required = false
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Prereg-draft path, driver-script scaffold path, .apxm output layout, claim-card stub."

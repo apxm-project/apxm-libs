@@ -1,0 +1,18 @@
+pack_id = "obra-superpowers-writing-skills"
+version = "0.0.1"
+display_name = "Writing Skills (obra/superpowers port)"
+description = "APXM-AIR port of obra/superpowers writing-skills. Use when creating new skills, editing existing skills, or verifying skills work before deployment"
+skill = "obra-superpowers-writing-skills"
+license = "MIT"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "port"
+upstream = "https://github.com/obra/superpowers"
+upstream_path = "skills/writing-skills/SKILL.md"
+upstream_commit = "f2cbfbefebbfef77321e4c9abc9e949826bea9d7"
+upstream_license = "MIT"
+attribution = "Original SKILL.md by Jesse Vincent (obra); APXM AIR port by APXM contributors."
+
+[integrity]
+pack_hash = ""

@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-brainstorming"
+version = "0.0.1"
+display_name = "Brainstorming (obra port)"
+description = "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirem…"
+entry_flow = "obra_superpowers_brainstorming"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

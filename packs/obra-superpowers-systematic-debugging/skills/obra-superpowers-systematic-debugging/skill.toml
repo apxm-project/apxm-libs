@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-systematic-debugging"
+version = "0.0.1"
+display_name = "Systematic Debugging (obra port)"
+description = "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes"
+entry_flow = "obra_superpowers_systematic_debugging"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

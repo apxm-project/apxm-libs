@@ -1,0 +1,27 @@
+skill_id = "apxm-quality-eval"
+version = "0.0.1"
+display_name = "APXM Quality Eval"
+description = "Run quality fixtures, budgets, judges, and claim checks — coordinates with apxm-eval companion repo."
+entry_flow = "apxm_quality_eval"
+required_capabilities = []
+timeout_ms = 600000
+token_limit = 16384
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "fixture"
+type = "string"
+description = "Quality-eval fixture name (e.g. optimisation_invariant)."
+required = true
+
+[[inputs]]
+name = "opt_level"
+type = "string"
+description = "Compiler opt level for the run (0/1/2)."
+required = false
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Run artifact path under .apxm/evaluation/, budget summary, judge verdicts, claim-check status."

@@ -1,0 +1,33 @@
+// APXM-AIR port of obra/superpowers brainstorming.
+// Mirrors the upstream 9-step checklist with a typed dataflow that the
+// runtime can dispatch CPU-cheap planning calls on, fan out approach
+// proposals, and cache the "ideate" pool across critique rounds.
+
+flow brainstorming(task: string) -> design_doc: json {
+  // Phase 1: orient on project context (deterministic, no LLM).
+  let ctx = read_project_context(task);
+
+  // Phase 2: planner decides whether visual companion is needed.
+  let needs_visual = plan_check_visual(task, ctx) @cpu;
+
+  // Phase 3: ideate clarifying questions (cacheable across critiques).
+  let questions = ideate_questions(task, ctx) @cpu @reuse_group("brainstorm");
+
+  // Phase 4: fan out 2-3 candidate approaches in parallel.
+  let approaches = parallel {
+    propose_approach(task, ctx, slot=0) @cpu @reuse_group("brainstorm"),
+    propose_approach(task, ctx, slot=1) @cpu @reuse_group("brainstorm"),
+    propose_approach(task, ctx, slot=2) @cpu @reuse_group("brainstorm"),
+  };
+
+  // Phase 5: synthesize design from chosen approach (GPU-heavy).
+  let design = synthesize_design(task, ctx, questions, approaches) @gpu;
+
+  // Phase 6: self-review for placeholders/contradictions before persisting.
+  let reviewed = validate_self_review(design) @cpu;
+
+  // Phase 7: write design doc to docs/superpowers/specs/.
+  let design_doc = persist_design_doc(reviewed);
+
+  return design_doc;
+}

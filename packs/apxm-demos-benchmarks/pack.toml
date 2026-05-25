@@ -1,0 +1,14 @@
+pack_id = "apxm-demos-benchmarks"
+version = "0.0.1"
+display_name = "APXM Demos & Benchmarks"
+description = "Author Gemma demos and benchmark harnesses: workload selection, preregistration template, driver-script scaffold, .apxm output paths."
+skill = "apxm-demos-benchmarks"
+license = "Apache-2.0"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "original"
+attribution = "APXM contributors."
+
+[integrity]
+pack_hash = ""

@@ -1,0 +1,27 @@
+skill_id = "apxm-author-python"
+version = "0.0.1"
+display_name = "APXM Author (Python)"
+description = "Author Python frontend workflows: GraphRecorder DSL patterns, AIR inspection, codegen reload after .td edits."
+entry_flow = "apxm_author_python"
+required_capabilities = []
+timeout_ms = 120000
+token_limit = 8192
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "What the new or modified Python workflow should do."
+required = true
+
+[[inputs]]
+name = "target_path"
+type = "string"
+description = "Optional path under examples/python/ or tests/ where the workflow lives."
+required = false
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Generated workflow skeleton + emitted AIR sample + suggested test."

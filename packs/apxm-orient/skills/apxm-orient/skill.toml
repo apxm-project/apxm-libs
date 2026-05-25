@@ -1,0 +1,21 @@
+skill_id = "apxm-orient"
+version = "0.0.1"
+display_name = "APXM Orient"
+description = "Deterministic project orientation: doctor + repo layout summary + crate map. No LLM calls."
+entry_flow = "apxm_orient"
+required_capabilities = []
+timeout_ms = 30000
+token_limit = 0
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "focus_area"
+type = "string"
+description = "Optional subsystem filter (compiler, runtime, server, frontend, eval)."
+required = false
+
+[[outputs]]
+name = "orientation"
+type = "json"
+description = "Structured orientation card: doctor status, crate map, recent commits, active branches, open todos."

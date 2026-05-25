@@ -1,0 +1,14 @@
+pack_id = "apxm-author-python"
+version = "0.0.1"
+display_name = "APXM Author (Python)"
+description = "Author Python frontend workflows: GraphRecorder DSL patterns, AIR inspection, codegen reload after .td edits."
+skill = "apxm-author-python"
+license = "Apache-2.0"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "original"
+attribution = "APXM contributors."
+
+[integrity]
+pack_hash = ""

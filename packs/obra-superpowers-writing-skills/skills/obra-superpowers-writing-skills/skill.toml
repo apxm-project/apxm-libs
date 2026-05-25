@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-writing-skills"
+version = "0.0.1"
+display_name = "Writing Skills (obra port)"
+description = "Use when creating new skills, editing existing skills, or verifying skills work before deployment"
+entry_flow = "obra_superpowers_writing_skills"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

@@ -1,0 +1,18 @@
+pack_id = "obra-superpowers-finishing-a-development-branch"
+version = "0.0.1"
+display_name = "Finishing A Development Branch (obra/superpowers port)"
+description = "APXM-AIR port of obra/superpowers finishing-a-development-branch. Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting stru…"
+skill = "obra-superpowers-finishing-a-development-branch"
+license = "MIT"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "port"
+upstream = "https://github.com/obra/superpowers"
+upstream_path = "skills/finishing-a-development-branch/SKILL.md"
+upstream_commit = "f2cbfbefebbfef77321e4c9abc9e949826bea9d7"
+upstream_license = "MIT"
+attribution = "Original SKILL.md by Jesse Vincent (obra); APXM AIR port by APXM contributors."
+
+[integrity]
+pack_hash = ""

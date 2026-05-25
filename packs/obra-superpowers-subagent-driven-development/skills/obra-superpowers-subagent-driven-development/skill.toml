@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-subagent-driven-development"
+version = "0.0.1"
+display_name = "Subagent Driven Development (obra port)"
+description = "Use when executing implementation plans with independent tasks in the current session"
+entry_flow = "obra_superpowers_subagent_driven_development"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

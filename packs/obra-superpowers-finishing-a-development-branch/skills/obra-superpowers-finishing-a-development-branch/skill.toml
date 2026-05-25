@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-finishing-a-development-branch"
+version = "0.0.1"
+display_name = "Finishing A Development Branch (obra port)"
+description = "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting stru…"
+entry_flow = "obra_superpowers_finishing_a_development_branch"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-dispatching-parallel-agents"
+version = "0.0.1"
+display_name = "Dispatching Parallel Agents (obra port)"
+description = "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies"
+entry_flow = "obra_superpowers_dispatching_parallel_agents"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

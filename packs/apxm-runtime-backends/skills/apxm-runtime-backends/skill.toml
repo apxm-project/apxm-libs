@@ -1,0 +1,27 @@
+skill_id = "apxm-runtime-backends"
+version = "0.0.1"
+display_name = "APXM Runtime Backends"
+description = "Work on runtime scheduling, backend routing, and vLLM dispatch hints — apxm-backends + apxm-runtime."
+entry_flow = "apxm_runtime_backends"
+required_capabilities = []
+timeout_ms = 180000
+token_limit = 16384
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "What to change in the backend or scheduler (e.g. 'add Anthropic provider', 'thread shared_prefix_group through vllm xargs')."
+required = true
+
+[[inputs]]
+name = "backend"
+type = "string"
+description = "Optional backend filter (llm/local/tool/vllm)."
+required = false
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Files to touch, contract checks to run, vLLM-fork-side coordination needed."

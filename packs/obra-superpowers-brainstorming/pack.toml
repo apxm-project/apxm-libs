@@ -1,0 +1,18 @@
+pack_id = "obra-superpowers-brainstorming"
+version = "0.0.1"
+display_name = "Brainstorming (obra/superpowers port)"
+description = "APXM-AIR port of obra/superpowers brainstorming. You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirem…"
+skill = "obra-superpowers-brainstorming"
+license = "MIT"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "port"
+upstream = "https://github.com/obra/superpowers"
+upstream_path = "skills/brainstorming/SKILL.md"
+upstream_commit = "f2cbfbefebbfef77321e4c9abc9e949826bea9d7"
+upstream_license = "MIT"
+attribution = "Original SKILL.md by Jesse Vincent (obra); APXM AIR port by APXM contributors."
+
+[integrity]
+pack_hash = ""

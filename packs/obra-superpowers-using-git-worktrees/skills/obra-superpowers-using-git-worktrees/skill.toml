@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-using-git-worktrees"
+version = "0.0.1"
+display_name = "Using Git Worktrees (obra port)"
+description = "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via n…"
+entry_flow = "obra_superpowers_using_git_worktrees"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

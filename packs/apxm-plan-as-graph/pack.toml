@@ -1,0 +1,14 @@
+pack_id = "apxm-plan-as-graph"
+version = "0.1.0"
+display_name = "APXM Plan as Graph"
+description = "Emit a typed APXM AIR graph for complex agent work, then compile and dispatch it through APXM."
+skill = "apxm-plan-as-graph"
+license = "Apache-2.0"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "original"
+attribution = "APXM contributors."
+
+[integrity]
+pack_hash = ""

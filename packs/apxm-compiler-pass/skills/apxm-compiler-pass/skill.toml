@@ -1,0 +1,27 @@
+skill_id = "apxm-compiler-pass"
+version = "0.0.1"
+display_name = "APXM Compiler Pass"
+description = "Develop or debug AIS/MLIR compiler passes: TableGen + C++ shim + Rust handler + pipeline registration."
+entry_flow = "apxm_compiler_pass"
+required_capabilities = []
+timeout_ms = 180000
+token_limit = 16384
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "pass_intent"
+type = "string"
+description = "What the new or modified pass should do (e.g. 'fold redundant ask nodes', 'hoist tool calls')."
+required = true
+
+[[inputs]]
+name = "target_op"
+type = "string"
+description = "Optional AIS op name to focus on."
+required = false
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Pass skeleton location, pipeline registration patch, unit-test scaffold, recommended IR fixtures."

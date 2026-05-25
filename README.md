@@ -6,105 +6,149 @@ The compiled-skill library for [APXM](https://github.com/apxm-project/apxm).
 > skills do — compiled, versioned, linkable, and governed.
 > *(VISION.md)*
 
-Each entry under `skills/` is a self-contained compiled skill bundle
-(`skill.toml` + `SKILL.md` + optional `skill.air` + `skill.apxmobj`)
-that the APXM runtime can load, validate, and execute.
+`apxm-libs` is a catalog of **packs**. Each pack is a versioned,
+install-as-a-unit bundle containing exactly one skill (singleton model):
+
+```
+packs/<pack-id>/
+    pack.toml                     # pack manifest + provenance
+    README.md                     # pack docs
+    skills/<skill-id>/
+        skill.toml                # SkillManifest
+        SKILL.md                  # source markdown + frontmatter
+        skill.air                 # optional compiled AIR
+        skill.apxmobj             # optional artifact
+        upstream/SKILL.md         # original (port packs only)
+        notes.md                  # translation notes (port packs)
+```
+
+The runtime loads packs via the existing `apxm-skill::SkillManifest`
+contract (defined in
+`apxm/crates/core/apxm-skill/src/lib.rs`); packs add provenance
+metadata on top — every pack declares `[source].kind` as either
+`original` (APXM-authored) or `port` (re-expression of an upstream
+skill).
+
+## Two pack classes
+
+| Class | Pack id convention | Example |
+|---|---|---|
+| APXM-development | no source prefix | `apxm-orient`, `apxm-plan-as-graph` |
+| obra/superpowers port | `obra-superpowers-<name>` | `obra-superpowers-brainstorming` |
+
+Ports re-express obra/superpowers community skills (MIT, at
+`github.com/obra/superpowers`) as typed AIR graphs. The original
+`SKILL.md` is shipped verbatim under `skills/<id>/upstream/`; the
+APXM port adds the AIR graph, dispatch hints, cache-reuse groups, and
+session traces that let the runtime fold redundant LLM calls and
+replay from intermediates.
 
 ## Install
 
-### v1 — sibling clone (current)
+### Sibling clone
 
-`apxm-server` auto-discovers a sibling `apxm-libs/skills/` directory
-relative to your `apxm` checkout. Clone the two repos next to each
-other:
+`apxm-server` auto-discovers a sibling `apxm-libs/packs/` directory:
 
 ```bash
 git clone https://github.com/apxm-project/apxm.git
 git clone https://github.com/apxm-project/apxm-libs.git
-# from inside the apxm checkout, apxm-server picks up ../apxm-libs/skills automatically
 ```
 
-### v1b — user install
-
-Place the library under your home directory:
+### User install
 
 ```bash
 git clone https://github.com/apxm-project/apxm-libs.git ~/.apxm/libs
 ```
 
-`apxm-server` auto-discovers `~/.apxm/libs/` regardless of where you
-run it from.
+`apxm-server` auto-discovers `~/.apxm/libs/packs/` regardless of cwd.
 
-### v1c — explicit override
+### Explicit override
 
 ```bash
-export APXM_SKILL_ROOTS=/path/to/apxm-libs/skills
+export APXM_SKILL_ROOTS=/path/to/apxm-libs/packs
 apxm-server
 ```
 
-Or pass `--skill-root /path/to/apxm-libs/skills` to `apxm-server` /
-`apxm-mcp-server` directly.
+Or pass `--skill-root /path/to/apxm-libs/packs` to `apxm-server` /
+`apxm-mcp-server`.
 
-### v2 — registry install (planned, R.9)
+### Registry (planned)
 
 ```bash
-dekk apxm libs install apxm-plan-as-graph        # download + hash-verify + install
-dekk apxm libs list                              # what's installed
-dekk apxm libs search <query>                    # query the registry
+dekk apxm libs install <pack-id>        # download + blake3-verify + install
+dekk apxm libs list                     # installed packs
+dekk apxm libs search <query>           # query the registry
 ```
 
 ## What's here
 
-```
-skills/
-    apxm-plan-as-graph/    Plan-as-graph dispatcher (the original
-                           bundled skill; seeds the registry)
-```
-
-More packs land as R.8 ships:
-
-- `apxm-orient` — read-only project orientation (R.8 priority)
-- `apxm-demos-benchmarks` — benchmark authoring (R.8 priority)
-- `apxm-author-python`, `apxm-compiler-pass`, `apxm-runtime-backends`,
-  `apxm-server-mcp`, `apxm-quality-eval`, `apxm-design-docs` (R.8.4)
-
-## Skill bundle layout
-
-Each bundle conforms to `apxm-skill::SkillManifest` (defined in
-`apxm/crates/core/apxm-skill/src/lib.rs`):
+### APXM-development packs (singleton each)
 
 ```
-skills/<skill-id>/
-    skill.toml          Manifest (skill_id, version, capabilities,
-                        isolation_policy, entry_flow, inputs, outputs,
-                        artifact_hash for v2 verification)
-    SKILL.md            Source (markdown with YAML frontmatter)
-    prompt.md           Optional templated prompt
-    schema.json         Optional input/output schema
-    skill.air           Optional compiled AIR (entry_flow target)
-    skill.apxmobj       Optional pre-built artifact (built from skill.air)
-    examples/           Optional executable examples
+packs/
+    apxm-plan-as-graph/              Plan-as-graph dispatcher (shipped)
+    apxm-orient/                     Read-only project orientation
+    apxm-demos-benchmarks/           Benchmark authoring
+    apxm-author-python/              Python frontend authoring
+    apxm-compiler-pass/              Compiler pass authoring
+    apxm-runtime-backends/           Runtime/backend adapter work
+    apxm-server-mcp/                 apxm-server REST/MCP surface
+    apxm-quality-eval/               Quality-eval harness work
+    apxm-design-docs/                docs/design/ editor with overclaim guard
 ```
 
-## Contributing a new skill
+### obra/superpowers port packs (14 singletons)
 
-1. Pick a `skill_id` not in use; bump `version` per SemVer.
-2. Author `skill.toml` + `SKILL.md`.
-3. If the skill is a flow, author `skill.air` and ensure
-   `dekk apxm compile skill.air` succeeds.
-4. Run the local validator (lands with R.8.3):
-   ```bash
-   python tools/validate_skill.py skills/<skill-id>
-   ```
-5. Open a PR. Maintainers tag releases when a bundle is ready to ship
-   to the v2 registry (R.9).
+```
+packs/
+    obra-superpowers-brainstorming/             (priority, AIR compiled)
+    obra-superpowers-systematic-debugging/      (priority, AIR compiled)
+    obra-superpowers-test-driven-development/
+    obra-superpowers-verification-before-completion/
+    obra-superpowers-writing-plans/
+    obra-superpowers-executing-plans/
+    obra-superpowers-dispatching-parallel-agents/
+    obra-superpowers-requesting-code-review/
+    obra-superpowers-receiving-code-review/
+    obra-superpowers-using-git-worktrees/
+    obra-superpowers-finishing-a-development-branch/
+    obra-superpowers-subagent-driven-development/
+    obra-superpowers-writing-skills/
+    obra-superpowers-using-superpowers/
+```
 
-For the design rationale, read
-[`apxm/docs/design/apxm-aware-codex-skill-libraries.md`](https://github.com/apxm-project/apxm/blob/main/docs/design/apxm-aware-codex-skill-libraries.md).
+Non-priority port packs ship pack.toml + verbatim upstream SKILL.md +
+translation notes; their `skill.air` lands incrementally.
+
+## Validating a pack
+
+```bash
+python tools/validate_pack.py packs/<pack-id>            # one pack
+python tools/validate_pack.py packs/*/                   # everything
+```
+
+The validator parses `pack.toml`, confirms `[source]` matches its
+kind, confirms the contained skill bundle parses against
+`SkillManifest`, and recomputes `artifact_hash` when a `.apxmobj` is
+present.
+
+## Contributing a new pack
+
+1. Choose a pack id: APXM-authored work uses no prefix; ports prefix
+   with `<source>-` (e.g. `obra-superpowers-<skill>`).
+2. Author `pack.toml` with the appropriate `[source].kind`.
+3. Author `skills/<skill-id>/skill.toml` + `SKILL.md`.
+4. For port packs: include the upstream `SKILL.md` verbatim under
+   `skills/<skill-id>/upstream/`, pin `upstream_commit` and
+   `upstream_license` in `pack.toml [source]`, and write `notes.md`
+   describing the markdown → AIR translation.
+5. Run `python tools/validate_pack.py packs/<pack-id>`.
+6. Open a PR. Maintainers tag releases when a pack is ready to ship to
+   the registry.
 
 ## Related repos
 
 - [apxm-project/apxm](https://github.com/apxm-project/apxm) — runtime
-  that loads these bundles
+  that loads these packs
 - [apxm-project/apxm-eval](https://github.com/apxm-project/apxm-eval) —
   evaluation harness + preregistrations

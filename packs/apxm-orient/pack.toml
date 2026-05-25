@@ -1,0 +1,14 @@
+pack_id = "apxm-orient"
+version = "0.0.1"
+display_name = "APXM Orient"
+description = "Deterministic project orientation: doctor + repo layout summary + crate map. No LLM calls."
+skill = "apxm-orient"
+license = "Apache-2.0"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "original"
+attribution = "APXM contributors."
+
+[integrity]
+pack_hash = ""

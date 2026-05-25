@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-requesting-code-review"
+version = "0.0.1"
+display_name = "Requesting Code Review (obra port)"
+description = "Use when completing tasks, implementing major features, or before merging to verify work meets requirements"
+entry_flow = "obra_superpowers_requesting_code_review"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."

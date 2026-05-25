@@ -1,0 +1,27 @@
+skill_id = "apxm-server-mcp"
+version = "0.0.1"
+display_name = "APXM Server / MCP"
+description = "Modify REST/MCP/A2A server surfaces coherently — apxm-server, MCP installer, route + tool registration."
+entry_flow = "apxm_server_mcp"
+required_capabilities = []
+timeout_ms = 120000
+token_limit = 12288
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "What server/MCP surface change to make (e.g. 'add /v1/apxm/profile route', 'register new MCP tool')."
+required = true
+
+[[inputs]]
+name = "surface"
+type = "string"
+description = "Optional surface filter (rest/mcp/a2a)."
+required = false
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Files to touch (handler + registration + tests), Dekk wrapper updates needed, MCP manifest changes."

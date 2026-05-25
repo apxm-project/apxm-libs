@@ -1,0 +1,21 @@
+skill_id = "obra-superpowers-verification-before-completion"
+version = "0.0.1"
+display_name = "Verification Before Completion (obra port)"
+description = "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output be…"
+entry_flow = "obra_superpowers_verification_before_completion"
+required_capabilities = []
+timeout_ms = 300000
+token_limit = 32768
+isolation_policy = "sandboxed"
+side_effect_policy = "sandboxed"
+
+[[inputs]]
+name = "task"
+type = "string"
+description = "Natural-language task to drive the workflow."
+required = true
+
+[[outputs]]
+name = "result"
+type = "json"
+description = "Structured workflow output (per-node trace + final synthesis)."
