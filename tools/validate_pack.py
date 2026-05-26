@@ -11,6 +11,13 @@ Checks:
     (delegated to validate_skill.py).
   * For port packs: skills/<skill>/upstream/SKILL.md is present.
 
+With --require-artifact (used by `dekk apxm libs publish`):
+  * skills/<skill>/skill.apxmobj must exist.
+  * Its BLAKE3 must equal skill.toml::artifact_hash. Drift is
+    rejected with the canonical (pack_id, skill_id, expected,
+    actual) tuple so install-time tamper detection has a single
+    failure shape across the publish/install boundary.
+
 Exit code 0 on success, 1 on any failure.
 """
 from __future__ import annotations
@@ -25,6 +32,15 @@ try:
 except ModuleNotFoundError:
     import tomli as tomllib
 
+try:
+    import blake3 as _blake3
+    HAVE_BLAKE3 = True
+except ModuleNotFoundError:
+    _blake3 = None
+    HAVE_BLAKE3 = False
+
+HASH_PREFIX = "blake3:"
+
 REQUIRED_TOP = ("pack_id", "version", "skill", "license")
 REQUIRED_SOURCE = ("kind", "attribution")
 PORT_REQUIRED = ("upstream", "upstream_path", "upstream_commit", "upstream_license")
@@ -35,7 +51,43 @@ def _fail(path: Path, msg: str) -> None:
     print(f"FAIL {path}: {msg}", file=sys.stderr)
 
 
-def validate_pack(pack_dir: Path) -> int:
+def _tagged_blake3(data: bytes) -> str:
+    if not HAVE_BLAKE3:
+        raise RuntimeError("blake3 not installed; `pip install blake3`")
+    return f"{HASH_PREFIX}{_blake3.blake3(data).hexdigest()}"
+
+
+def _check_artifact(
+    pack_id: str,
+    skill_id: str,
+    skill_dir: Path,
+) -> int:
+    artifact = skill_dir / "skill.apxmobj"
+    if not artifact.is_file():
+        _fail(skill_dir, f"--require-artifact: missing skill.apxmobj for {skill_id}")
+        return 1
+    skill_toml = skill_dir / "skill.toml"
+    try:
+        manifest = tomllib.loads(skill_toml.read_text())
+    except tomllib.TOMLDecodeError as exc:
+        _fail(skill_toml, f"TOML parse error: {exc}")
+        return 1
+    declared = manifest.get("artifact_hash") or ""
+    if not declared:
+        _fail(skill_toml, f"--require-artifact: skill.toml::artifact_hash empty for {skill_id}")
+        return 1
+    actual = _tagged_blake3(artifact.read_bytes())
+    if declared != actual:
+        _fail(
+            skill_dir,
+            f"artifact_hash mismatch: pack={pack_id} skill={skill_id} "
+            f"expected={declared} actual={actual}",
+        )
+        return 1
+    return 0
+
+
+def validate_pack(pack_dir: Path, require_artifact: bool = False) -> int:
     failures = 0
     manifest_path = pack_dir / "pack.toml"
     if not manifest_path.exists():
@@ -92,6 +144,9 @@ def validate_pack(pack_dir: Path) -> int:
                 if not upstream_md.exists():
                     _fail(skill_dir, "port pack missing upstream/SKILL.md")
                     failures += 1
+            if require_artifact:
+                pack_id = manifest.get("pack_id") or pack_dir.name
+                failures += _check_artifact(pack_id, skill_id, skill_dir)
 
     if failures == 0:
         print(f"OK   {pack_dir}")
@@ -101,6 +156,15 @@ def validate_pack(pack_dir: Path) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("paths", nargs="+", type=Path, help="Pack directories to validate")
+    parser.add_argument(
+        "--require-artifact",
+        action="store_true",
+        help=(
+            "Reject packs whose skills lack a compiled .apxmobj or whose "
+            "skill.toml::artifact_hash disagrees with the bytes on disk. "
+            "Used by `dekk apxm libs publish` to gate releases."
+        ),
+    )
     args = parser.parse_args()
 
     rc = 0
@@ -109,7 +173,7 @@ def main() -> int:
             print(f"FAIL {path}: not a directory", file=sys.stderr)
             rc = 1
             continue
-        rc |= validate_pack(path)
+        rc |= validate_pack(path, require_artifact=args.require_artifact)
     return rc
 
 
