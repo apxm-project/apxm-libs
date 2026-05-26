@@ -21,6 +21,11 @@ description = "Optional compact repository or session context."
 required = false
 
 [[outputs]]
+name = "task_dag"
+type = "json"
+description = "Validated APXM AIR graph (task DAG) the caller can compile and execute."
+
+[[outputs]]
 name = "summary"
 type = "json"
 description = "Summary result plus trace_id; full trace is fetched separately."
