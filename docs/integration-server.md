@@ -1,30 +1,20 @@
 # Integration with `apxm-server`
 
-This page documents the full server-side surface for `apxm-libs`
-packs: how `apxm-server` discovers them, the REST routes it exposes,
-the execution sequence, the inputs it rejects, and the runtime
-initialization contract. The pack format itself lives in
-[`architecture.md`](architecture.md); the MCP wrapping lives in
-[`integration-mcp.md`](integration-mcp.md).
+This page documents how `apxm-libs` packs are *consumed* by
+`apxm-server`. The server itself, including its full REST surface and
+internal implementation, is documented in apxm core — see
+[`apxm-project/apxm/crates/tools/apxm-server/README.md`](https://github.com/apxm-project/apxm/blob/main/crates/tools/apxm-server/README.md).
+The pack format lives in [`architecture.md`](architecture.md); the
+MCP wrapping lives in [`integration-mcp.md`](integration-mcp.md).
 
-The server code referenced here lives in apxm core under
-`crates/tools/apxm-server/` — in particular `src/skills.rs`,
-`src/state.rs`, `src/execute.rs`, `src/executions.rs`,
-`src/main.rs`, and `src/runtime_setup.rs`.
+## Identity contract
 
-## Server is the source of truth
-
-The GUI does not own discovery. The CLI does not own discovery. There
-is exactly one `SkillLibrary`, and it lives inside `apxm-server`. Both
-the GUI in `apxm-project/apxm-gui` (`src/api/skills.rs`) and CLI
-inspection commands in `apxm-project/apxm`'s `crates/tools/apxm-cli`
-consume the server endpoints. This avoids the previous failure mode
-where each tool maintained its own scanner and diverged on manifest
-interpretation.
-
-Skill identity on every API surface is `skill_id` plus `version`
-(both come from the upstream `SkillManifest`). `display_name` is for
-UI text and is never an identifier.
+Skill identity on every API surface is `skill_id` plus `version`,
+both produced from a pack's `SkillManifest`. `display_name` is for
+UI text and is never an identifier. The server is the single owner of
+discovery: every other tool (GUI, CLI inspection commands) reads
+through the server's endpoints, so manifest interpretation cannot
+diverge.
 
 ## Skill-root configuration
 
@@ -172,25 +162,19 @@ execution to agents:
 
 ## Runtime initialization
 
-Skill execution must use the same runtime build path as the driver. A
-bare `Runtime::new(RuntimeConfig::default())` does not configure the
-LLM registry, capability registry, sandbox registry, model router,
-middlewares, agent registry, or workflow spawner that
-`RuntimeExecutor::new` (driver path) configures. The shared
-runtime-builder lives in `crates/tools/apxm-server/src/runtime_setup.rs`
-and is consumed by both the driver and the server so that skill mode
-and driver-backed execution have parity on capability admission,
-sandbox routing, ACP agent registry, and inner-plan linkage.
-
-A pack therefore behaves identically when invoked through the server,
-through the driver, or through a CLI smoke test — there is no
-"server-only" runtime shape.
+A pack behaves identically when invoked through the server, through
+the driver, or through a CLI smoke test. Capability admission,
+sandbox routing, ACP agent registry, and inner-plan linkage are all
+identical across entry points — there is no "server-only" runtime
+shape that packs need to anticipate. The shared runtime-builder that
+guarantees this parity lives in apxm core; see the apxm-server README
+linked at the top of this page.
 
 ## Session output
 
 Every server-owned skill run writes a session directory under
-APXM-owned storage. Layout (subset; see apxm core `session_output.rs`
-for the full schema):
+APXM-owned storage. The full schema is owned by apxm core; the subset
+a pack author needs to know about looks like:
 
 ```
 sessions/<skill_run_id>/
