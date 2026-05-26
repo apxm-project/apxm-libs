@@ -47,8 +47,8 @@ recompute its blake3 artifact hash cleanly.
   validator for `packs/<pack-id>/`.
 - **`tools/validate_skill.py`** — manifest validator for a single
   `skill.toml` under any pack.
-- **`docs/`** — vision, architecture, manifests, integration surfaces,
-  registry, backlog, and ADRs.
+- **`docs/`** — architecture, manifests, integration surfaces, and
+  registry.
 - **`.agents/`** — this SSOT, the pack-authoring skills, and shared
   rules.
 
