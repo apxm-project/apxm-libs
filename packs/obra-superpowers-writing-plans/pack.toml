@@ -12,7 +12,7 @@ upstream = "https://github.com/obra/superpowers"
 upstream_path = "skills/writing-plans/SKILL.md"
 upstream_commit = "f2cbfbefebbfef77321e4c9abc9e949826bea9d7"
 upstream_license = "MIT"
-attribution = "Original SKILL.md by Jesse Vincent (obra); APXM AIR port by APXM contributors."
+attribution = "Jesse Vincent (obra) and Superpowers contributors; ported by The APXM authors"
 
 [integrity]
 pack_hash = ""

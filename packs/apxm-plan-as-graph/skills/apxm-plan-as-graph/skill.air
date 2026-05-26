@@ -1,0 +1,24 @@
+// APXM original skill: plan-as-graph.
+// Takes a natural-language task and emits a typed AIR JSON document
+// (task_dag) the caller can compile and execute through APXM.
+//
+// The planner role is dispatched once on GPU under a reuse_group so
+// repeated calls with the same (task, context) fold against the
+// prefix cache. Validation is a CPU-cheap gate; a malformed graph
+// gets one repair pass, then a clean error.
+
+flow apxm_plan_as_graph(task: string, context: string) -> task_dag: json {
+  // Phase 1: assemble the planner prompt from caller inputs.
+  let planner_prompt = read_inputs(task, context) @cpu;
+
+  // Phase 2: planner role emits candidate AIR JSON.
+  let candidate = emit_task_dag(planner_prompt) @gpu @reuse_group("apxm_plan_as_graph");
+
+  // Phase 3: validate against schema.json; one repair attempt on failure.
+  let task_dag = validate_task_dag(candidate, planner_prompt) @cpu;
+
+  // Phase 4: wrap the validated graph and metadata as the returned summary.
+  let summary = synthesize_summary(task_dag) @cpu;
+
+  return task_dag;
+}

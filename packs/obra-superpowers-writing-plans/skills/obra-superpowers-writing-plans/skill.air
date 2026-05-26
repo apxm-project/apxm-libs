@@ -1,0 +1,34 @@
+// APXM-AIR port of obra/superpowers writing-plans.
+// Turns a spec into a bite-sized implementation plan document.
+// The single GPU-heavy node (decompose_tasks) sits behind cheap CPU
+// scope + structure checks; validate_self_review is a hard gate that
+// rejects placeholder phrasing before the plan is persisted.
+
+flow obra_superpowers_writing_plans(task: string) -> plan_path: string {
+  // Step 0: announce the skill is engaged (deterministic banner).
+  let banner = announce_writing_plans(task);
+
+  // Step 1: scope check — suggest splitting if spec spans subsystems.
+  let scope = scope_check(task) @cpu;
+
+  // Step 2: name the files the plan will create or modify.
+  let structure = map_file_structure(task, scope) @cpu;
+
+  // Step 3: decompose into 2-5 minute steps (GPU; cacheable across reviews).
+  let tasks = decompose_tasks(task, scope, structure)
+                @gpu @reuse_group("writing_plans");
+
+  // Step 4: render the required plan header.
+  let header = render_plan_header(task, scope, structure) @cpu;
+
+  // Step 5: self-review gate — reject placeholders, missing tests.
+  let reviewed = validate_self_review(header, tasks) @cpu;
+
+  // Step 6: append the subagent / inline execution handoff prose.
+  let handoff = render_execution_handoff(reviewed) @cpu;
+
+  // Step 7: persist the plan document to docs/superpowers/plans/.
+  let plan_path = persist_plan_document(handoff);
+
+  return plan_path;
+}
