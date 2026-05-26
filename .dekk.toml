@@ -1,0 +1,28 @@
+# apxm-libs — dekk apxm-libs install
+
+[project]
+name = "apxm-libs"
+description = "Compiled-skill library (packs) loaded by apxm-server"
+
+[tools]
+python = { command = "python3", version = ">=3.10" }
+
+[env]
+PYTHONDONTWRITEBYTECODE = "1"
+PYTHONUNBUFFERED = "1"
+
+[paths]
+bin = ["{home}/.local/bin"]
+
+[commands]
+validate     = { run = "python3 tools/validate_pack.py packs",                       description = "Validate every pack manifest under packs/",  group = "Build & Test" }
+validate-one = { run = "python3 tools/validate_pack.py",                              description = "Validate a single pack (pass the pack path)", group = "Build & Test" }
+validate-skill = { run = "python3 tools/validate_skill.py",                           description = "Validate a single SkillManifest file",       group = "Build & Test" }
+lint         = { run = "python3 -m pyflakes tools",                                   description = "Lint the validator scripts",                 group = "Build & Test" }
+
+doctor       = { run = "python3 tools/validate_pack.py packs --quiet",                description = "Smoke-validate the pack catalog",            group = "Configuration" }
+
+list         = { run = "python3 -c 'import pathlib; [print(p.name) for p in sorted(pathlib.Path(\"packs\").iterdir()) if p.is_dir()]'", description = "List installed packs", group = "Registry" }
+
+[install]
+# apxm-libs has no compiled artifact; packs are consumed in-tree by apxm-server.

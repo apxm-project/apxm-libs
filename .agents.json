@@ -1,0 +1,28 @@
+{
+  "project": "apxm-libs",
+  "source_of_truth": ".agents/",
+  "agent_configs": {
+    "claude": {
+      "instructions": "CLAUDE.md",
+      "skills": ".claude/skills/"
+    },
+    "codex": {
+      "instructions": "AGENTS.md",
+      "skills": "~/.codex/skills/"
+    },
+    "copilot": {
+      "instructions": ".github/copilot-instructions.md",
+      "per_directory": ".github/instructions/"
+    },
+    "cursor": {
+      "instructions": ".cursorrules"
+    }
+  },
+  "skills": [
+    {
+      "name": "apxm-skill-authoring",
+      "description": "Use when adding or editing an APXM agent skill under .agents/skills/. Enforces SSOT pattern, _shared/ pointers (never inlined text), \u2264100 lines per SKILL.md, and dual Claude+Codex compatibility."
+    }
+  ],
+  "cli": "dekk apxm-libs"
+}
