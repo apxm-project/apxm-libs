@@ -36,7 +36,7 @@ backlog) are not repeated here.
 | P1 | Static skill execution | APXM runs precompiled, hash-validated pack artifacts with server-owned sessions. (Shipped.) |
 | P1 | Typed observability | Streams and sessions expose node outputs, prompts, metrics, skill identity, and scopes. (G1, G2 in flight.) |
 | P2 | Nested skill execution | Parent graphs can call child artifacts/skills and keep child evidence inspectable. (G3, G4, T3 series.) |
-| P2 | Evaluation harness | A0-A4 benchmarks produce defensible rows and claim reports. (Lives in `apxm-eval`.) |
+| P2 | Evaluation harness | A0-A4 benchmarks produce defensible rows and claim reports. (Owned by the consuming evaluation harness, not this catalog.) |
 | P3 | Dynamic loading/conversion | APXM converts/compiles/caches packs safely on demand. (T5 series.) |
 | P3 | Scheduler checkpoint/replay | Pack runs can pause, checkpoint, resume, and replay from scheduler state. (G6, T6 series.) |
 
@@ -280,10 +280,11 @@ and the matching `INV_TOOL(capability = "skill:<id>")` shape).
 
 ### T4 — evaluation and benchmarks
 
-Lives in `apxm-project/apxm-eval`. Open items: the A0-A4 runner
-fixture (`checkout-context-triage` is the seed case), claim linting,
-benchmark ladder. The pack catalog ships independently; the eval
-harness picks up packs by `skill_id@version` once the runner exists.
+Owned by the consuming evaluation harness, not this catalog. Open items
+on that side: the A0-A4 runner fixture (`checkout-context-triage` is the
+seed case), claim linting, and the benchmark ladder. The pack catalog
+ships independently; whatever harness consumes it picks up packs by
+`skill_id@version` once the runner exists.
 
 ### T5 — dynamic loading and conversion
 
@@ -359,8 +360,8 @@ scheduler-state snapshots.
 
 ### Step 8 — Run the A0-A4 skill evaluation
 
-Lives in `apxm-project/apxm-eval`. The first fixture is
-`checkout-context-triage`. Success criteria: A3 preserves A1
+Owned by the consuming evaluation harness, not this catalog. The first
+fixture is `checkout-context-triage`. Success criteria: A3 preserves A1
 correctness; A4 preserves A3 correctness; A4 has artifact-backed
 evidence of fewer calls/tokens or eliminated ops; every claim traces
 to CSV rows, session metrics, compiler diagnostics, or trace
@@ -382,9 +383,9 @@ executable, and observable" only when:
 - Typed event streams include node outputs or redacted summaries.
 - Missing capabilities and hash mismatches fail before runtime
   execution.
-- A benchmark report (in `apxm-eval`) includes A0-A4 rows or
-  explicitly scopes the claim to A3/A4.
-- The claim linter (in `apxm-eval`) passes.
+- A benchmark report from the consuming evaluation harness includes
+  A0-A4 rows or explicitly scopes the claim to A3/A4.
+- The consuming harness's claim linter passes.
 
 ## Open questions
 

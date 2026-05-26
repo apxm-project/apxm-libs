@@ -108,11 +108,9 @@ frictionless.
 3. `python tools/validate_pack.py packs/<pack-id>`.
 4. Open a PR. Maintainers tag releases.
 
-## Related repos
+## Substrate
 
-- [`apxm-project/apxm`](https://github.com/apxm-project/apxm) —
-  runtime, compiler, server.
-- [`apxm-project/apxm-eval`](https://github.com/apxm-project/apxm-eval)
-  — evaluation harness + preregistrations.
-- [`apxm-project/apxm-gui`](https://github.com/apxm-project/apxm-gui)
-  — web dashboard.
+[`apxm-project/apxm`](https://github.com/apxm-project/apxm) is the
+runtime, compiler, and server this catalog is consumed by. The
+`SkillManifest` contract that every pack here conforms to is defined
+there.

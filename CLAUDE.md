@@ -52,28 +52,13 @@ recompute its blake3 artifact hash cleanly.
 - **`.agents/`** — this SSOT, the pack-authoring skills, and shared
   rules.
 
-## 4. Companion repos
+## 4. Substrate
 
-`apxm-libs` is one child in the APXM org lineage:
-
-- `apxm-project/apxm` — parent repo; graph-aware dispatch for vLLM, AIS
-  dialect, MLIR compiler, Rust runtime, CLI, and APXM/vLLM fork
-  contract. Owns the `SkillManifest` definition this repo's packs
-  conform to.
-- `apxm-project/apxm-eval` — born from APXM to keep preregistrations,
-  benchmarks, claim cards, and paper drafts outside runtime development.
-  Owns the skill-eval corpus that tests packs from this repo.
-- `apxm-project/apxm-os` — born from APXM to supervise long-lived
-  always-listening APXM agents. Loads packs from this repo through
-  `apxm-server`.
-- `apxm-project/apxm-gui` — born from APXM to ship the axum + React
-  dashboard as a standalone binary. Browses packs from this repo
-  through `apxm-server`.
-- `apxm-project/vllm` — born from APXM to carry the graph-aware vLLM
-  fork that accepts APXM dispatch hints.
-
-Do not describe `apxm-libs` as APXM core. It is the library catalog,
-loaded by APXM core's server; the manifest contract lives upstream.
+`apxm-project/apxm` is the runtime, compiler, and server this catalog
+is consumed by. It owns the `SkillManifest` contract every pack here
+conforms to. Do not describe `apxm-libs` as APXM core: it is the
+library catalog, loaded by APXM core's server; the manifest contract
+lives upstream.
 
 ## 5. Two pack classes
 
