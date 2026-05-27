@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-writing-plans"
 version = "0.0.1"
 display_name = "Writing Plans (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers writing-plans. Use when you have a spec or requirements for a multi-step task, before touching code"
-skill = "obra-superpowers-writing-plans"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

@@ -2,7 +2,6 @@ pack_id = "apxm-quality-eval"
 version = "0.0.1"
 display_name = "APXM Quality Eval"
 description = "Run quality fixtures, budgets, judges, and claim checks — coordinates with the apxm-eval companion repo."
-skill = "apxm-quality-eval"
 license = "Apache-2.0"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

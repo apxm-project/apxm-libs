@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-verification-before-completion"
 version = "0.0.1"
 display_name = "Verification Before Completion (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers verification-before-completion. Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output be…"
-skill = "obra-superpowers-verification-before-completion"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

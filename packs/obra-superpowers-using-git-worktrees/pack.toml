@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-using-git-worktrees"
 version = "0.0.1"
 display_name = "Using Git Worktrees (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers using-git-worktrees. Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via n…"
-skill = "obra-superpowers-using-git-worktrees"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

@@ -43,10 +43,22 @@ clean and the next `apxm-server` load will refuse to dispatch.
 ## Loader discovery
 
 `apxm-server` finds installed packs by walking the
-`APXM_SKILLS_PATH` directory list. By default this includes
-`~/.apxm/libs/`. Each pack's `skills/<skill-id>/` is discovered
-through `find_manifest_dirs` and loaded into the server's
-`SkillLibrary`.
+`APXM_SKILL_ROOTS` directory list (split with `std::env::split_paths`,
+see `apxm-server/src/skill_resources.rs::parse_skill_roots`). The
+loader only reads `APXM_SKILL_ROOTS`; `APXM_LIBS_ROOT` is the
+install-path default for `dekk apxm libs install` and is not a loader
+variable. Each pack's `skills/<skill-id>/` is discovered through
+`find_manifest_dirs` and loaded into the server's `SkillLibrary`.
+
+Point the loader at a libs root by including it explicitly:
+
+```
+APXM_SKILL_ROOTS="$HOME/.apxm/libs:/opt/clic/skills" apxm-server ...
+# or via CLI: --skill-root $HOME/.apxm/libs --skill-root /opt/clic/skills
+```
+
+The v2 multi-skill pack layout is tracked in
+[`pack-format.md`](pack-format.md).
 
 To verify what the server sees:
 

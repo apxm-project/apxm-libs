@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-test-driven-development"
 version = "0.0.1"
 display_name = "Test Driven Development (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers test-driven-development. Use when implementing any feature or bugfix, before writing implementation code"
-skill = "obra-superpowers-test-driven-development"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

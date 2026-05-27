@@ -2,7 +2,6 @@ pack_id = "apxm-compiler-pass"
 version = "0.0.1"
 display_name = "APXM Compiler Pass"
 description = "Develop or debug AIS/MLIR compiler passes: TableGen + C++ shim + Rust handler + pipeline registration."
-skill = "apxm-compiler-pass"
 license = "Apache-2.0"
 homepage = "https://github.com/apxm-project/apxm-libs"
 
