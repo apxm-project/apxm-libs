@@ -1,22 +1,33 @@
 #!/usr/bin/env python3
 """Validate one or more apxm-libs pack directories.
 
+The pack format is a single, unified shape. A pack may contain one or many
+skills; the optional `agent.toml` / `hierarchy.toml` / `tools.toml` files
+at the pack root declare agent identity, position in the hierarchy, and
+tool manifests when the pack ships an agent rather than only skills.
+
 Checks:
-  * pack.toml parses and declares pack_id, version, skill, license.
+  * pack.toml parses and declares pack_id, version, license.
   * [source] block is well-formed:
       - kind ∈ {"original", "port"}.
       - When kind = "port": upstream, upstream_path, upstream_commit,
         upstream_license, attribution are required.
-  * skills/<skill>/ exists and contains a valid skill bundle
-    (delegated to validate_skill.py).
+  * skills/ contains at least one skill directory, each with a valid
+    skill bundle (delegated to validate_skill.py).
   * For port packs: skills/<skill>/upstream/SKILL.md is present.
+  * Optional pack-root files validated when present:
+      - agent.toml — must declare agent_id, display_name, agent_type, scope.
+      - hierarchy.toml — parent_agent (string) and child_agents (list of
+        strings) optional.
+      - tools.toml — each [[tool]] entry declares name, capability,
+        endpoint_pattern.
 
 With --require-artifact (used by `dekk apxm libs publish`):
-  * skills/<skill>/skill.apxmobj must exist.
-  * Its BLAKE3 must equal skill.toml::artifact_hash. Drift is
-    rejected with the canonical (pack_id, skill_id, expected,
-    actual) tuple so install-time tamper detection has a single
-    failure shape across the publish/install boundary.
+  * Every skill's skill.apxmobj must exist.
+  * Its BLAKE3 must equal skill.toml::artifact_hash. Drift is rejected
+    with the canonical (pack_id, skill_id, expected, actual) tuple so
+    install-time tamper detection has a single failure shape across the
+    publish/install boundary.
 
 Exit code 0 on success, 1 on any failure.
 """
@@ -41,10 +52,12 @@ except ModuleNotFoundError:
 
 HASH_PREFIX = "blake3:"
 
-REQUIRED_TOP = ("pack_id", "version", "skill", "license")
+REQUIRED_TOP = ("pack_id", "version", "license")
 REQUIRED_SOURCE = ("kind", "attribution")
 PORT_REQUIRED = ("upstream", "upstream_path", "upstream_commit", "upstream_license")
 VALID_KINDS = {"original", "port"}
+REQUIRED_AGENT_FIELDS = ("agent_id", "display_name", "agent_type", "scope")
+REQUIRED_TOOL_FIELDS = ("name", "capability", "endpoint_pattern")
 
 
 def _fail(path: Path, msg: str) -> None:
@@ -57,11 +70,7 @@ def _tagged_blake3(data: bytes) -> str:
     return f"{HASH_PREFIX}{_blake3.blake3(data).hexdigest()}"
 
 
-def _check_artifact(
-    pack_id: str,
-    skill_id: str,
-    skill_dir: Path,
-) -> int:
+def _check_artifact(pack_id: str, skill_id: str, skill_dir: Path) -> int:
     artifact = skill_dir / "skill.apxmobj"
     if not artifact.is_file():
         _fail(skill_dir, f"--require-artifact: missing skill.apxmobj for {skill_id}")
@@ -83,6 +92,83 @@ def _check_artifact(
             f"artifact_hash mismatch: pack={pack_id} skill={skill_id} "
             f"expected={declared} actual={actual}",
         )
+        return 1
+    return 0
+
+
+def _validate_agent_toml(path: Path) -> int:
+    if not path.is_file():
+        return 0
+    try:
+        data = tomllib.loads(path.read_text())
+    except tomllib.TOMLDecodeError as exc:
+        _fail(path, f"TOML parse error: {exc}")
+        return 1
+    failures = 0
+    for field in REQUIRED_AGENT_FIELDS:
+        if not data.get(field):
+            _fail(path, f"agent.toml missing required field: {field}")
+            failures += 1
+    return failures
+
+
+def _validate_hierarchy_toml(path: Path) -> int:
+    if not path.is_file():
+        return 0
+    try:
+        data = tomllib.loads(path.read_text())
+    except tomllib.TOMLDecodeError as exc:
+        _fail(path, f"TOML parse error: {exc}")
+        return 1
+    failures = 0
+    parent = data.get("parent_agent")
+    if parent is not None and not isinstance(parent, str):
+        _fail(path, "hierarchy.toml::parent_agent must be a string")
+        failures += 1
+    children = data.get("child_agents")
+    if children is not None and (
+        not isinstance(children, list) or not all(isinstance(c, str) for c in children)
+    ):
+        _fail(path, "hierarchy.toml::child_agents must be a list of strings")
+        failures += 1
+    return failures
+
+
+def _validate_tools_toml(path: Path) -> int:
+    if not path.is_file():
+        return 0
+    try:
+        data = tomllib.loads(path.read_text())
+    except tomllib.TOMLDecodeError as exc:
+        _fail(path, f"TOML parse error: {exc}")
+        return 1
+    failures = 0
+    tools = data.get("tool")
+    if tools is None:
+        return 0
+    if not isinstance(tools, list):
+        _fail(path, "tools.toml::[[tool]] must be an array of tables")
+        return 1
+    for index, entry in enumerate(tools):
+        if not isinstance(entry, dict):
+            _fail(path, f"tools.toml::[[tool]] entry #{index} must be a table")
+            failures += 1
+            continue
+        for field in REQUIRED_TOOL_FIELDS:
+            if not entry.get(field):
+                _fail(path, f"tools.toml::[[tool]] entry #{index} missing {field}")
+                failures += 1
+    return failures
+
+
+def _validate_skill(skill_dir: Path) -> int:
+    validator = Path(__file__).resolve().parent / "validate_skill.py"
+    res = subprocess.run(
+        [sys.executable, str(validator), str(skill_dir)],
+        capture_output=True, text=True,
+    )
+    if res.returncode != 0:
+        sys.stderr.write(res.stderr)
         return 1
     return 0
 
@@ -124,29 +210,31 @@ def validate_pack(pack_dir: Path, require_artifact: bool = False) -> int:
                 _fail(manifest_path, f"[source] port pack missing: {field}")
                 failures += 1
 
-    skill_id = manifest.get("skill")
-    if skill_id:
-        skill_dir = pack_dir / "skills" / skill_id
-        if not skill_dir.is_dir():
-            _fail(pack_dir, f"skills/{skill_id}/ missing for declared skill={skill_id!r}")
+    pack_id = manifest.get("pack_id") or pack_dir.name
+
+    skills_root = pack_dir / "skills"
+    if not skills_root.is_dir():
+        _fail(pack_dir, "pack must contain a skills/ directory")
+        failures += 1
+    else:
+        skill_dirs = sorted(p for p in skills_root.iterdir() if p.is_dir())
+        if not skill_dirs:
+            _fail(skills_root, "pack must contain at least one skill")
             failures += 1
-        else:
-            validator = Path(__file__).resolve().parent / "validate_skill.py"
-            res = subprocess.run(
-                [sys.executable, str(validator), str(skill_dir)],
-                capture_output=True, text=True,
-            )
-            if res.returncode != 0:
-                sys.stderr.write(res.stderr)
-                failures += 1
+        for skill_dir in skill_dirs:
+            skill_id = skill_dir.name
+            failures += _validate_skill(skill_dir)
             if kind == "port":
                 upstream_md = skill_dir / "upstream" / "SKILL.md"
                 if not upstream_md.exists():
                     _fail(skill_dir, "port pack missing upstream/SKILL.md")
                     failures += 1
             if require_artifact:
-                pack_id = manifest.get("pack_id") or pack_dir.name
                 failures += _check_artifact(pack_id, skill_id, skill_dir)
+
+    failures += _validate_agent_toml(pack_dir / "agent.toml")
+    failures += _validate_hierarchy_toml(pack_dir / "hierarchy.toml")
+    failures += _validate_tools_toml(pack_dir / "tools.toml")
 
     if failures == 0:
         print(f"OK   {pack_dir}")

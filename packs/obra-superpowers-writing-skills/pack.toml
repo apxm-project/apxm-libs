@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-writing-skills"
 version = "0.0.1"
 display_name = "Writing Skills (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers writing-skills. Use when creating new skills, editing existing skills, or verifying skills work before deployment"
-skill = "obra-superpowers-writing-skills"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

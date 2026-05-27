@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-receiving-code-review"
 version = "0.0.1"
 display_name = "Receiving Code Review (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers receiving-code-review. Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical…"
-skill = "obra-superpowers-receiving-code-review"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

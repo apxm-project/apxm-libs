@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-systematic-debugging"
 version = "0.0.1"
 display_name = "Systematic Debugging (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers systematic-debugging. Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes"
-skill = "obra-superpowers-systematic-debugging"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

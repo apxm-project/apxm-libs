@@ -1,0 +1,13 @@
+pack_id      = "apxm-bundle-example"
+version      = "0.1.0"
+display_name = "APXM Bundle Example"
+description  = "Reference multi-skill pack with agent + hierarchy + tools metadata at the pack root."
+license      = "Apache-2.0"
+homepage     = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind        = "original"
+attribution = "APXM contributors."
+
+[integrity]
+pack_hash = "blake3:0000000000000000000000000000000000000000000000000000000000000000"

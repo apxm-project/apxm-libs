@@ -1,0 +1,6 @@
+agent_id            = "apxm.example.greeter"
+display_name        = "Example Greeter"
+agent_type          = "module"
+scope               = "example"
+runtime_skill_ids   = ["apxm-bundle-greet"]
+default_capabilities = ["example.greet"]

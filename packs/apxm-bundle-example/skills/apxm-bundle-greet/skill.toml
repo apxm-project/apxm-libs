@@ -1,0 +1,22 @@
+skill_id      = "apxm-bundle-greet"
+version       = "0.1.0"
+display_name  = "Example Greet"
+description   = "Tiny scaffold skill that returns a greeting."
+entry_flow    = "greet"
+
+required_capabilities = ["example.greet"]
+timeout_ms            = 5000
+token_limit           = 0
+isolation_policy      = "read_only"
+side_effect_policy    = "read_only"
+
+[[inputs]]
+name        = "name"
+type        = "string"
+description = "Who to greet."
+required    = true
+
+[[outputs]]
+name        = "greeting"
+type        = "string"
+description = "The composed greeting."

@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-executing-plans"
 version = "0.0.1"
 display_name = "Executing Plans (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers executing-plans. Use when you have a written implementation plan to execute in a separate session with review checkpoints"
-skill = "obra-superpowers-executing-plans"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

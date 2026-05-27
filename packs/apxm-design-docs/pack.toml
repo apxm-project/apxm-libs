@@ -2,7 +2,6 @@ pack_id = "apxm-design-docs"
 version = "0.0.1"
 display_name = "APXM Design Docs"
 description = "Update conceptual docs in docs/design/ without overclaiming implementation state — keeps prose anchored to shipped code."
-skill = "apxm-design-docs"
 license = "Apache-2.0"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

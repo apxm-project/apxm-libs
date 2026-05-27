@@ -1,0 +1,6 @@
+[[tool]]
+name              = "example.greet"
+capability        = "example.greet"
+endpoint_pattern  = "/clic/tools/invoke/example.greet"
+requires_approval = false
+read_only         = true

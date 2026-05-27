@@ -2,7 +2,6 @@ pack_id = "apxm-runtime-backends"
 version = "0.0.1"
 display_name = "APXM Runtime Backends"
 description = "Work on runtime scheduling, backend routing, and vLLM dispatch hints — apxm-backends + apxm-runtime."
-skill = "apxm-runtime-backends"
 license = "Apache-2.0"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

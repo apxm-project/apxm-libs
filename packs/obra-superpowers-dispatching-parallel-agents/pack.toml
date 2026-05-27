@@ -2,7 +2,6 @@ pack_id = "obra-superpowers-dispatching-parallel-agents"
 version = "0.0.1"
 display_name = "Dispatching Parallel Agents (obra/superpowers port)"
 description = "APXM-AIR port of obra/superpowers dispatching-parallel-agents. Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies"
-skill = "obra-superpowers-dispatching-parallel-agents"
 license = "MIT"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

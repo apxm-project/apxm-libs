@@ -2,7 +2,6 @@ pack_id = "apxm-server-mcp"
 version = "0.0.1"
 display_name = "APXM Server / MCP"
 description = "Modify REST/MCP/A2A server surfaces coherently — apxm-server, MCP installer, route + tool registration."
-skill = "apxm-server-mcp"
 license = "Apache-2.0"
 homepage = "https://github.com/apxm-project/apxm-libs"
 

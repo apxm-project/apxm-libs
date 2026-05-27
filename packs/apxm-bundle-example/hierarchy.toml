@@ -1,0 +1,2 @@
+parent_agent = "apxm.example.workflow_supervisor"
+child_agents = []
