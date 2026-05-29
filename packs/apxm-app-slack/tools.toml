@@ -1,0 +1,10 @@
+# Slack action blocks. Backing kind=provider -> the runtime provider.call
+# capability forwards to the Slack API via apxm-auth /proxy (secret stays in
+# apxm-auth). The url/method/body are supplied by the workflow node's args;
+# studio prefills them from this declaration when the block is dropped.
+[[tool]]
+name              = "Post message"
+capability        = "slack.post"
+kind              = "provider"
+requires_approval = false
+read_only         = false

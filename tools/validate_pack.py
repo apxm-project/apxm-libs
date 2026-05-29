@@ -58,6 +58,8 @@ PORT_REQUIRED = ("upstream", "upstream_path", "upstream_commit", "upstream_licen
 VALID_KINDS = {"original", "port"}
 REQUIRED_AGENT_FIELDS = ("agent_id", "display_name", "agent_type", "scope")
 REQUIRED_TOOL_FIELDS = ("name", "capability", "endpoint_pattern")
+# Backing kinds a [[tool]] may declare (endpoint_pattern only required for http).
+VALID_TOOL_KINDS = ("provider", "http", "static", "mcp")
 
 
 def _fail(path: Path, msg: str) -> None:
@@ -154,10 +156,21 @@ def _validate_tools_toml(path: Path) -> int:
             _fail(path, f"tools.toml::[[tool]] entry #{index} must be a table")
             failures += 1
             continue
-        for field in REQUIRED_TOOL_FIELDS:
+        # name + capability are always required.
+        for field in ("name", "capability"):
             if not entry.get(field):
                 _fail(path, f"tools.toml::[[tool]] entry #{index} missing {field}")
                 failures += 1
+        # The backing kind selects how the block is registered. endpoint_pattern
+        # is required ONLY for kind=http (provider blocks resolve url at dispatch
+        # via provider.call; mcp/static carry no endpoint).
+        kind = entry.get("kind", "provider")
+        if kind not in VALID_TOOL_KINDS:
+            _fail(path, f"tools.toml::[[tool]] entry #{index} kind={kind!r} not in {sorted(VALID_TOOL_KINDS)}")
+            failures += 1
+        if kind == "http" and not entry.get("endpoint_pattern"):
+            _fail(path, f"tools.toml::[[tool]] entry #{index} (kind=http) missing endpoint_pattern")
+            failures += 1
     return failures
 
 
@@ -212,13 +225,27 @@ def validate_pack(pack_dir: Path, require_artifact: bool = False) -> int:
 
     pack_id = manifest.get("pack_id") or pack_dir.name
 
+    # An "app"/connector pack contributes BLOCKS (tools.toml / [app]) rather than
+    # executable skills, so the skills/ requirement is relaxed for it.
+    is_app_pack = isinstance(manifest.get("app"), dict)
+    has_tools = (pack_dir / "tools.toml").is_file()
+    blocks_only = is_app_pack or has_tools
+
+    if is_app_pack:
+        app = manifest["app"]
+        for field in ("id", "category"):
+            if not app.get(field):
+                _fail(manifest_path, f"[app] missing required field: {field}")
+                failures += 1
+
     skills_root = pack_dir / "skills"
     if not skills_root.is_dir():
-        _fail(pack_dir, "pack must contain a skills/ directory")
-        failures += 1
+        if not blocks_only:
+            _fail(pack_dir, "pack must contain a skills/ directory")
+            failures += 1
     else:
         skill_dirs = sorted(p for p in skills_root.iterdir() if p.is_dir())
-        if not skill_dirs:
+        if not skill_dirs and not blocks_only:
             _fail(skills_root, "pack must contain at least one skill")
             failures += 1
         for skill_dir in skill_dirs:
