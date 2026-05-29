@@ -40,6 +40,17 @@ If you have ever tampered with an installed `.apxmobj` (one byte
 is enough), the next `dekk apxm libs verify <pack-id>` will fail
 clean and the next `apxm-server` load will refuse to dispatch.
 
+**Empty `pack_hash` (unsealed packs).** A dev-built pack ships
+`pack.toml [integrity].pack_hash = ""`. In that state `verify` cannot
+check the tarball seal. The default (non-strict) behaviour is explicit:
+it prints a `WARNING` that the seal is absent and falls back to
+per-skill `artifact_hash` verification, so a tampered `.apxmobj` is
+still caught when the skill carries its own hash. Pass `--strict`
+(`dekk apxm libs verify --strict <pack-id>`) to turn an empty/missing
+`pack_hash` into a hard failure — this is what CI and release gates
+should use. Recommendation: `--strict` should become the default once
+all shipped packs are sealed by the pack-compile workflow.
+
 ## Loader discovery
 
 `apxm-server` finds installed packs by walking the

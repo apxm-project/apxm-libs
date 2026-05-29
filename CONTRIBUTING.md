@@ -121,8 +121,12 @@ dekk apxm libs search <substring>
 # Install your in-progress pack into ~/.apxm/libs/ for end-to-end testing
 dekk apxm libs install <pack-id> --source /path/to/apxm-libs/packs --force
 
-# Verify the installed bytes against pack.toml [integrity].pack_hash
+# Verify the installed bytes against pack.toml [integrity].pack_hash.
+# A dev pack ships pack_hash="" (unsealed); by default verify only WARNS
+# in that case and falls back to per-skill artifact_hash checks. Pass
+# --strict to make an empty/missing pack_hash a hard failure (CI / gates):
 dekk apxm libs verify <pack-id>
+dekk apxm libs verify --strict <pack-id>
 ```
 
 ## PR conventions

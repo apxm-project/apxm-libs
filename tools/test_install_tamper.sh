@@ -3,12 +3,21 @@
 #
 # Exercises the three hash layers (tarball pack_hash, per-skill
 # artifact_hash, wire-internal BLAKE3) by:
+#   0. Building the pack so pack.toml [integrity].pack_hash and each
+#      skill.toml artifact_hash are POPULATED (a dev pack ships them
+#      empty; an empty pack_hash makes --strict verify fail hard and
+#      would make the tamper assertions below unreachable — see F09).
 #   1. Installing a pack from a freshly-built tarball.
-#   2. Verifying — must pass.
+#   2. Verifying with --strict — must pass (hash is now populated).
 #   3. Tampering one byte of the installed skill.apxmobj.
 #   4. Re-verifying — must fail with the canonical
 #      (pack_id, skill_id, expected, actual) mismatch tuple.
 #   5. Restoring the pack and removing it.
+#
+# Why --strict: with an empty/missing pack_hash the verifier fails OPEN
+# in its non-strict default (it only WARNS and falls back to per-skill
+# checks). This test seals the pack first and then asserts under
+# --strict so the real tamper-detection path is exercised end to end.
 #
 # The test does NOT depend on a network release: it uses sibling-clone
 # install (the default `dekk apxm libs install <pack-id>` path) so the
@@ -67,8 +76,23 @@ apxmobj="$install_root/$pack_id/skills/$skill_id/skill.apxmobj"
 
 step() { printf '\n=== %s ===\n' "$*"; }
 
-step "1. uninstall any prior copy"
+step "0. uninstall any prior copy"
 dekk apxm libs uninstall "$pack_id" 2>/dev/null || true
+
+step "1. build pack (populate pack_hash + artifact_hash + apxmobj)"
+# Without this the source pack ships pack_hash="" and verify --strict
+# would abort before reaching the tamper path (F09).
+dekk apxm libs build "$pack_id"
+
+pack_hash="$(python3 -c '
+import sys, tomllib
+m = tomllib.loads(open(sys.argv[1]).read())
+print((m.get("integrity") or {}).get("pack_hash") or "")
+' "$pack_dir/pack.toml")"
+if [[ -z "$pack_hash" ]]; then
+  echo "FAIL: build did not populate pack.toml [integrity].pack_hash" >&2
+  exit 1
+fi
 
 step "2. install from sibling clone"
 dekk apxm libs install "$pack_id"
@@ -78,8 +102,8 @@ if [[ ! -f "$apxmobj" ]]; then
   exit 1
 fi
 
-step "3. verify (must pass)"
-dekk apxm libs verify "$pack_id"
+step "3. verify --strict (must pass; hash is populated)"
+dekk apxm libs verify --strict "$pack_id"
 
 step "4. tamper one byte of skill.apxmobj"
 backup="$(mktemp)"
@@ -96,8 +120,8 @@ open(p, "wb").write(bytes(data))
 print(f"tampered byte {target} of {len(data)}")
 PY
 
-step "5. verify (must FAIL with canonical mismatch tuple)"
-if out=$(dekk apxm libs verify "$pack_id" 2>&1); then
+step "5. verify --strict (must FAIL with canonical mismatch tuple)"
+if out=$(dekk apxm libs verify --strict "$pack_id" 2>&1); then
   echo "FAIL: verify accepted tampered pack" >&2
   echo "$out" >&2
   cp "$backup" "$apxmobj"
@@ -120,7 +144,7 @@ echo "OK: tamper detected with canonical (pack_id, skill_id, expected, actual) t
 step "6. restore + cleanup"
 cp "$backup" "$apxmobj"
 rm -f "$backup"
-dekk apxm libs verify "$pack_id"
+dekk apxm libs verify --strict "$pack_id"
 dekk apxm libs uninstall "$pack_id"
 
 echo
