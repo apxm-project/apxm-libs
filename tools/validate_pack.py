@@ -171,6 +171,9 @@ def _validate_tools_toml(path: Path) -> int:
         if kind == "http" and not entry.get("endpoint_pattern"):
             _fail(path, f"tools.toml::[[tool]] entry #{index} (kind=http) missing endpoint_pattern")
             failures += 1
+        if kind == "mcp" and not entry.get("server_url"):
+            _fail(path, f"tools.toml::[[tool]] entry #{index} (kind=mcp) missing server_url")
+            failures += 1
     return failures
 
 
