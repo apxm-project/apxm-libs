@@ -1,0 +1,13 @@
+pack_id = "apxm-app-discord-agent"
+version = "0.1.0"
+display_name = "Discord Project Agent"
+description = "Curate/answer skills for the always-listening Discord project agent: ingest channel messages into project memory, then answer from accumulated context."
+license = "MIT"
+homepage = "https://github.com/apxm-project/apxm-libs"
+
+[source]
+kind = "original"
+attribution = "The APXM authors"
+
+[integrity]
+pack_hash = ""
