@@ -7,19 +7,18 @@ fallback: native answering
 # Discord Project Answer
 
 The `answer` skill for an apxm-os agent that has been listening to a Discord
-project channel and curating it into memory. It is **prompt-only**: apxm-os runs
-this `SKILL.md` as the system prompt; the rendered answer is returned as content.
+project channel and curating it into memory. This compiled flow runs one LLM
+role that answers a question grounded ONLY in the agent's accumulated beliefs.
 
-You receive a single JSON envelope as input:
+## Contract
+- **Input** `payload` — JSON `{ question, agent_context }` from apxm-os.
+- **Output** `answer` (string) — the rendered answer (also surfaced as content).
 
+## Build
+Authored as an APXM Python-frontend flow (`answer.py`) that emits canonical AIR:
 ```
-{ "question": "what did we decide about X?",
-  "agent_context": { "agent_id": "...", "belief_scope": "project.<name>.*",
-                     "beliefs": { "project.<name>.decision.x": <value>, ... } } }
+APXM_EMIT_AIR=1 python answer.py > skill.air
+dekk apxm libs build apxm-app-discord-agent   # compiles skill.air -> skill.apxmobj
 ```
-
-Answer the `question` **using only `agent_context.beliefs`** as ground truth —
-this is the project's accumulated memory. Be specific: cite the relevant
-decisions, owners, deadlines, and facts. If the beliefs do not cover the
-question, say so plainly rather than inventing an answer. Keep it concise and
-directly useful; no preamble.
+Compiled artifact is shipped; running the `ais.ask` role needs a configured model
+backend on apxm-server.

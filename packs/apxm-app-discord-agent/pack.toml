@@ -10,4 +10,4 @@ kind = "original"
 attribution = "The APXM authors"
 
 [integrity]
-pack_hash = ""
+pack_hash = "blake3:16477195368d5f58a0c1f3982f2331dfd2624abc210b0281b6242acd4235852c"

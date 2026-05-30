@@ -10,6 +10,7 @@ side_effect_policy = "sandboxed"
 
 # The apxm-os curate ABI: one JSON-encoded { event, agent_context } envelope in,
 # a CurationResult out under the `curation` token.
+artifact_hash = "blake3:b2d529812f7cb7445f0f78f8989b65c21853abaad0f4f4cc6e46def14b6d5d8a"
 [[inputs]]
 name = "payload"
 type = "string"
