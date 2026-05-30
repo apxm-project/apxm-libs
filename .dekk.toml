@@ -1,7 +1,7 @@
-# apxm-libs — dekk apxm-libs install
+# apxm-libs — dekk libs install
 
 [project]
-name = "apxm-libs"
+name = "libs"
 description = "Compiled-skill library (packs) loaded by apxm-server"
 
 [tools]
