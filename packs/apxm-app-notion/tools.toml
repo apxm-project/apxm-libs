@@ -1,0 +1,14 @@
+[[tool]]
+name = "Search"
+capability = "notion.search"
+kind = "provider"
+method = "POST"
+url = "https://api.notion.com/v1/search"
+read_only = true
+[[tool]]
+name = "Create page"
+capability = "notion.create_page"
+kind = "provider"
+method = "POST"
+url = "https://api.notion.com/v1/pages"
+read_only = false

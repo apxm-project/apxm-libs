@@ -1,0 +1,7 @@
+[[tool]]
+name = "Post tweet"
+capability = "social.x.post"
+kind = "provider"
+method = "POST"
+url = "https://api.x.com/2/tweets"
+read_only = false

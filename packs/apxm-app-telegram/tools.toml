@@ -1,0 +1,7 @@
+[[tool]]
+name = "Send message"
+capability = "telegram.send"
+kind = "provider"
+method = "POST"
+url = "https://api.telegram.org/bot{token}/sendMessage"
+read_only = false

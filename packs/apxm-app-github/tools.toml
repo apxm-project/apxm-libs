@@ -1,0 +1,7 @@
+[[tool]]
+name = "Create issue"
+capability = "github.issue_create"
+kind = "provider"
+method = "POST"
+url = "https://api.github.com/repos/{owner}/{repo}/issues"
+read_only = false

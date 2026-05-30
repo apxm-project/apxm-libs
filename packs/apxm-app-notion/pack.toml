@@ -1,0 +1,15 @@
+pack_id      = "apxm-app-notion"
+version      = "0.1.0"
+display_name = "POST"
+description  = "POST connector app (provider.call backing)."
+license      = "Apache-2.0"
+[source]
+kind = "original"
+attribution = "APXM contributors."
+[app]
+id       = "notion"
+category = "productivity"
+icon     = "notion"
+provider = "notion"
+[integrity]
+pack_hash = "blake3:0000000000000000000000000000000000000000000000000000000000000000"

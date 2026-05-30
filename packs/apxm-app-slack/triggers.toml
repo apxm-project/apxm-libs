@@ -1,0 +1,6 @@
+[[trigger]]
+id = "message"
+title = "New message"
+mechanism = "channel"
+cue_kind = "slack.message"
+node = "channel_trigger"

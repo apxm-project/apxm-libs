@@ -1,0 +1,7 @@
+[[trigger]]
+id = "push"
+title = "Webhook event"
+mechanism = "webhook"
+cue_kind = "github.event"
+node = "webhook_trigger"
+webhook_scheme = "github-hmac-sha256"

@@ -1,0 +1,15 @@
+pack_id      = "apxm-app-x"
+version      = "0.1.0"
+display_name = "POST"
+description  = "POST connector app (provider.call backing)."
+license      = "Apache-2.0"
+[source]
+kind = "original"
+attribution = "APXM contributors."
+[app]
+id       = "x"
+category = "social"
+icon     = "x"
+provider = "x"
+[integrity]
+pack_hash = "blake3:0000000000000000000000000000000000000000000000000000000000000000"
