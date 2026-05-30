@@ -1,10 +1,11 @@
-# Slack action blocks. Backing kind=provider -> the runtime provider.call
-# capability forwards to the Slack API via apxm-auth /proxy (secret stays in
-# apxm-auth). The url/method/body are supplied by the workflow node's args;
-# studio prefills them from this declaration when the block is dropped.
+# Slack action blocks. kind=provider -> the runtime provider.call capability
+# forwards to the Slack API via apxm-auth /proxy (secret stays in apxm-auth).
+# method/url are the request template studio prefills into the dropped node;
+# the node's args carry {credential, method, url, body} at dispatch.
 [[tool]]
 name              = "Post message"
 capability        = "slack.post"
 kind              = "provider"
-requires_approval = false
+method            = "POST"
+url               = "https://slack.com/api/chat.postMessage"
 read_only         = false

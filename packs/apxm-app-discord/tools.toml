@@ -1,0 +1,10 @@
+# Discord action blocks. provider.call -> apxm-auth /proxy, which injects the
+# bot token as `Authorization: Bot <token>` (providers.toml discord.auth_inject).
+# The url carries a {channel_id} the workflow fills in.
+[[tool]]
+name              = "Send message"
+capability        = "discord.post"
+kind              = "provider"
+method            = "POST"
+url               = "https://discord.com/api/v10/channels/{channel_id}/messages"
+read_only         = false
